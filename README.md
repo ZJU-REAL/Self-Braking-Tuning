@@ -82,7 +82,7 @@ Our method requires access to an LLM, and the recommended way to provide this is
 ```
 export APIKEY=<your_key>
 ```
-**Tip**: To offer a convenient default option, we use the OpenAI API key. However, when working with large-scale datasets, it’s recommended to deploy open-source models locally using vLLM or other frameworks for improved scalability and cost efficiency.
+**Tip**: To provide a convenient default option, we use the OpenAI API key.  However, for large-scale datasets, it is recommended to deploy open-source models locally using vLLM or other frameworks, and to leverage efficient methods such as batch processing for better scalability and cost efficiency.
 
 ## 🚀 Quick Start
 
