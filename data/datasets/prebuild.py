@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 # ─── Configuration ─────────────────────────────────────────────
 NUM_SAMPLES = 4  # Number of times to sample responses from the language model
-MODEL = "gpt-4"  # Model to use for inference
+MODEL = "gpt-4.1"  # Model to use for inference
 PROMPT_PATH = "prompts/solution_identification.txt"  # Path to the prompt template
 INPUT_JSONL = "data/baseline/openr1_math_92k.jsonl"  # Input JSONL file containing data
 OUTPUT_JSONL = "data/baseline/openr1_math_92k_augmented.jsonl"  # Output file with added fields
@@ -40,8 +40,7 @@ def analyze_reasoning(truncated_solution, solution, answer, model=MODEL):
         try:
             response = openai.ChatCompletion.create(
                 model=model,
-                messages=[{"role": "user", "content": full_prompt}],
-                temperature=0.7
+                messages=[{"role": "user", "content": full_prompt}]
             )
             message = response['choices'][0]['message']['content']
             responses.append(message.strip())

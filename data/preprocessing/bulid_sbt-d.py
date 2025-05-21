@@ -103,7 +103,8 @@ def parallel_tokenize(data, keywords, batch_size=128):
 # ===========================
 def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
     sbt_d_dataset = []
-    no_overthink = 0
+    overthink_count = 0
+    no_overthink_count = 0
 
     for item in tqdm(entries):
         token_list = item["gen1_tokens"].copy()
@@ -116,14 +117,12 @@ def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
         epiphany_index = None  # record length when epiphany first hits
 
         for tok in item["gen2_tokens"]:
-            # extend token list and update length
             total_len += 1
             token_list.append(tok)
 
             merged_text = "".join(token_list).lower()
             rer = len(item["gen1_tokens"]) / total_len
 
-            # compute OMR
             keyword_tokens = sum(
                 merged_text.count(k) * l for k, l in keywords.items()
             )
@@ -131,17 +130,14 @@ def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
 
             score = calculate_overthink_score(rer, omr)
 
-            # first time we cross the threshold: mark epiphany point
             if not overthink_triggered and score >= OVERTHINK_THRESHOLD:
                 overthink_triggered = True
                 epiphany_index = len(token_list)
 
-            # once we've gone past threshold + 0.05, we stop and record
             if overthink_triggered and score > OVERTHINK_THRESHOLD + 0.05:
                 new_generation = "".join(token_list) + EPIPHANY + item["post_think"]
                 new_generation = remove_extra_spacing(new_generation)
 
-                # extract the mask_content from epiphany_index to here
                 segment_tokens = token_list[epiphany_index:]
                 segment_text = "".join(segment_tokens)
                 mask_content = extract_mask_content(segment_text)
@@ -151,16 +147,14 @@ def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
                     "output": new_generation,
                     "mask_content": mask_content
                 })
+                overthink_count += 1
                 break
 
         else:
-            # This else runs if the for-loop completes without 'break'
             if overthink_triggered:
-                # We crossed OVERTHINK_THRESHOLD but never passed +0.05
                 new_generation = "".join(token_list) + EPIPHANY + item["post_think"]
                 new_generation = remove_extra_spacing(new_generation)
 
-                # mask_content is remainder from epiphany_index to end
                 segment_tokens = token_list[epiphany_index:]
                 segment_text = "".join(segment_tokens)
                 mask_content = extract_mask_content(segment_text)
@@ -170,15 +164,16 @@ def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
                     "output": new_generation,
                     "mask_content": mask_content
                 })
+                overthink_count += 1
             else:
-                # No overthinking at all
                 sbt_d_dataset.append({
                     "input": question,
                     "output": generation
                 })
+                no_overthink_count += 1
 
+    return sbt_d_dataset, overthink_count, no_overthink_count
 
-    return sbt_d_dataset, no_overthink
 
 # ===========================
 # SAVE FUNCTION
@@ -195,13 +190,16 @@ def main():
     dataset = load_jsonl_dataset(JSONL_PATH)
     keywords = load_keywords_and_token_lengths(KEYWORD_PATH, tokenizer)
     tokenized_data = parallel_tokenize(dataset, keywords)
-    sbt_d_data, no_overthink_count = build_sbt_d_data(tokenized_data, keywords, OVERTHINK_THRESHOLD)
+    sbt_d_data, overthink_count, no_overthink_count = build_sbt_d_data(tokenized_data, keywords, OVERTHINK_THRESHOLD)
 
     output_file = SBT_D_PATH
     save_jsonl(sbt_d_data, output_file)
 
+    total = overthink_count + no_overthink_count
     print(f"[RESULT] Processed {len(sbt_d_data)} entries. Saved to {output_file}")
-    print(f"[RESULT] No-Overthink count: {no_overthink_count}")
+    print(f"[RESULT] Overthink Count: {overthink_count} [{overthink_count / total:.2%}]")
+    print(f"[RESULT] No-Overthink Count: {no_overthink_count} [{no_overthink_count / total:.2%}]")
+
 
 if __name__ == "__main__":
     main()

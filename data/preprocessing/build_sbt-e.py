@@ -174,6 +174,13 @@ def main():
         if sbt:
             sbt_e_entries.append(sbt)
 
+    total_samples = len(augmented_entries)
+    overthink_count = sum(1 for e in augmented_entries if e.get("overthink_tag") == "Overthink")
+    no_overthink_count = sum(1 for e in augmented_entries if e.get("overthink_tag") == "No-Overthink")
+
+    print(f"Overthink Count: {overthink_count} [{overthink_count/total_samples:.2%}]")
+    print(f"No-Overthink Count: {no_overthink_count} [{no_overthink_count/total_samples:.2%}]")
+
     # Save SBT-E formatted output
     with open(SBT_E_PATH, "w", encoding="utf-8") as f:
         for item in sbt_e_entries:
