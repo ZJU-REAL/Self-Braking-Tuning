@@ -114,7 +114,7 @@ python data/preprocessing/build_sbt-d.py
 
 ### 5. Configure and Run Training / Evaluation
 
-Edit the YAML configuration files under `configs/`:
+Refer to the config Settings in the following file:
 
 * `train.yaml`: Training settings
 * `evalution.yaml`: Evaluation settings
