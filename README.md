@@ -75,7 +75,7 @@ During fine-tuning, we use the Megatron-LM framework, with related parameters sp
 Here, we provide a complete data construction framework that can be applied to nearly any long-chain tuning dataset, generating corresponding self-braking data accordingly.
 
 ## 🛠️ Preparation Steps Before Starting
-In *Let LLMs Break Free from Overthinking via Self-Braking Tuning*, we performed self-braking tuning based on the OpenR1-Math dataset. In fact, this approach is applicable to any long-chain reasoning dataset, as long as the reasoning segments are wrapped with `<think>` and `</think>` tags.
+In *Let LLMs Break Free from Overthinking via Self-Braking Tuning*, we performed self-braking tuning based on the OpenR1-Math dataset. In fact, this approach is applicable to any long-chain reasoning dataset, as long as the reasoning segments are wrapped with `<think>` and `</think>` tags. It is worth noting that, prior to training, it is recommended to keep the model's max_position_embeddings set to 32,768. In addition, to extend the context length from 4k to 32k, we increase the RoPE frequency to 300k.
 
 Our method requires access to an LLM, and the recommended way to provide this is by setting:
 
