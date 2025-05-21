@@ -1,0 +1,11 @@
+# inference.yaml
+# This file contains the configuration for the inference engine.
+
+# General inference configuration
+inference:
+  framework: vllm            # Inference engine
+  temperature: 0.7           # Sampling temperature
+  top_p: 1.0                 # Optional: use nucleus sampling if needed
+  num_samples: 8             # Number of samples to generate per question
+  max_tokens: 32768          # Please Ensure it!
+  output_format: jsonl       # Output format per sample

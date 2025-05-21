@@ -1,0 +1,82 @@
+# train.yaml
+# In our experiments, we use Megatron-LM as the training framework. 
+# Here, we present the hyperparameters used in our setup to facilitate reproducibility for readers.
+
+# Path to the pretrained model to load
+load: <your_pretrained_model_path>
+
+# Directory to save the fine-tuned model checkpoints
+save: <your_model_save_path>
+
+# Path to the training dataset (in .jsonl format)
+data-path: <your_dataset_path>
+
+# Directory for saving TensorBoard logs
+tensorboard-dir: <your_tensorboard_log_dir>
+
+# Model parallelism settings
+tensor-model-parallel-size: 2
+pipeline-model-parallel-size: 1
+
+# Training batch sizes
+global-batch-size: 64
+micro-batch-size: 1
+
+# Input sequence length
+seq-length: 16384
+
+# Number of training epochs
+train-epochs: 3
+
+# Logging and saving intervals
+log-interval: 1
+save-interval: 1000
+
+# Evaluation configuration (-1 disables evaluation)
+eval-interval: -1
+eval-iters: -1
+
+# Dataset splitting: train, validation, test
+split: "1000,0,0"
+
+# Activation checkpointing settings (for memory optimization)
+recompute-granularity: full
+recompute-method: block
+recompute-num-layers: 14
+
+# Optimizer and learning rate settings
+lr: 5e-5
+min-lr: 0
+lr-decay-style: cosine
+lr-warmup-fraction: 0.1
+adam-beta1: 0.9
+adam-beta2: 0.95
+weight-decay: 0.0
+clip-grad: 1.0
+
+# Dataloader settings
+dataloader-type: cyclic
+data-impl: mmap
+
+# Precision and numerical stability options
+bf16: ""
+tokenizer-type: HuggingfaceTokenizer
+attention-softmax-in-fp32: ""
+disable-bias-linear: ""
+
+# Attention and dropout settings
+use-flash-attn: ""
+make-vocab-size-divisible-by: 4
+attention-dropout: 0.0
+hidden-dropout: 0.0
+
+# Optional advanced memory optimization and training strategies
+splicing: ""
+varlen-attention: ""
+splicing-weight: ""
+hope_tracking.board: "true"
+simultaneous-writing-native-tensorboard: ""
+convert-unify-seperate: ""
+sequence-parallel: ""
+memory-optimize-in-sp: ""
+empty-unused-memory-level: 2

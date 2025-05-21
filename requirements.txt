@@ -1,0 +1,7 @@
+datasets
+transformers
+numpy
+openai
+tqdm
+torch
+modelscope
