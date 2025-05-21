@@ -10,8 +10,8 @@
             <div class="column has-text-centered">
                 <div class="is-size-5 publication-links">
                     <p>
-                    🔗 <a href="https://arxiv.org/abs/xxxx.xxxxx" target="_blank">arXiv</a> |
-                    📄 <a href="https://arxiv.org/pdf/xxxx.xxxxx.pdf" target="_blank">PDF</a> |
+                    🔗 <a href="https://arxiv.org/abs/2505.14604" target="_blank">arXiv</a> |
+                    📄 <a href="https://arxiv.org/pdf/2505.14604" target="_blank">PDF</a> |
                     🌐 <a href="https://ccai-lab.github.io/SBT/" target="_blank">Project Page</a>
                     </p>
                 </div>
