@@ -8,7 +8,7 @@ from datasets import load_dataset
 from transformers import AutoTokenizer
 
 # ─── Config ────────────────────────────────────────────────────────────────
-MODEL_PATH      = "/home/zhaohaoran/stopLLM/model/Qwen/Qwen2.5-Math-7B-Instruct"
+MODEL_PATH      = "models/Qwen/Qwen2.5-Math-1.5B-Instruct"
 MAX_TOKENS      = 16384
 OUTPUT_DIR      = "data/baseline"
 OUTPUT_FILENAME = "openr1_math_92k.jsonl"
