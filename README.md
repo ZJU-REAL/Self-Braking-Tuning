@@ -12,7 +12,7 @@
                     <p>
                     🔗 <a href="https://arxiv.org/abs/2505.14604" target="_blank">arXiv</a> |
                     📄 <a href="https://arxiv.org/pdf/2505.14604" target="_blank">PDF</a> |
-                    🌐 <a href="https://ccai-lab.github.io/SBT/" target="_blank">Project Page</a>
+                    🌐 <a href="https://zju-real.github.io/SBT/" target="_blank">Project Page</a>
                     </p>
                 </div>
                 <div class="is-size-5 publication-authors">
