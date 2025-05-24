@@ -1,6 +1,5 @@
 <div align="center">
-<h2>Let LLMs Break Free from Overthinking via Self-Braking Tuning</h2>
-  <div align="center">
+  <h2><img src="figures/logo.png" alt="Logo" width="20"/> Let LLMs Break Free from Overthinking via Self-Braking Tuning</h2>
 </div>
   <section class="hero">
     <div class="hero-body">
