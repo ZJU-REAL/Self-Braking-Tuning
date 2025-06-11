@@ -125,4 +125,22 @@ Refer to the config Settings in the following file:
 
 This project is licensed under the [Apache 2.0 License](./LICENSE).
 
+## 📖 Citation
 
+If you find our work helpful, feel free to give us a cite.
+
+```
+@misc{zhao2025letllmsbreakfree,
+      title={Let LLMs Break Free from Overthinking via Self-Braking Tuning}, 
+      author={Haoran Zhao and Yuchen Yan and Yongliang Shen and Haolei Xu and Wenqi Zhang and Kaitao Song and Jian Shao and Weiming Lu and Jun Xiao and Yueting Zhuang},
+      year={2025},
+      eprint={2505.14604},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2505.14604}, 
+}
+```
+
+## 📬 Contact Us
+If you have any questions, please contact us by email: 
+ran159753@tju.edu.cn, yanyuchen@zju.edu.cn, syl@zju.edu.cn
