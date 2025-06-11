@@ -119,12 +119,6 @@ Refer to the config Settings in the following file:
 * `train.yaml`: Training settings
 * `evalution.yaml`: Evaluation settings
 
-
-
-## 📄 License
-
-This project is licensed under the [Apache 2.0 License](./LICENSE).
-
 ## 📖 Citation
 
 If you find our work helpful, feel free to give us a cite.
