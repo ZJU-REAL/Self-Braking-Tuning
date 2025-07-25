@@ -63,8 +63,8 @@ def load_jsonl_dataset(path):
 def tokenize_batch(batch, keywords):
     results = []
     for entry in batch:
-        gen = entry["generation"].split("</think>")[0]
-        post = remove_step_tags(gen).split("</think>")[1]
+        gen = entry["labeled_generation"].split("</think>")[0]
+        post = remove_step_tags(entry["labeled_generation"]).split("</think>")[1]
 
         # Step boundary
         step_tag = f"<step{entry['first_correct']+1}>"
