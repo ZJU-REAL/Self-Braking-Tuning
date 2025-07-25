@@ -123,7 +123,7 @@ def build_sbt_e_entry(entry):
     Returns:
         dict or None: SBT-E entry with input/output (+ mask_content if applicable).
     """
-    input_text = entry["question"]
+    input_text = entry["problem"]
     generation = entry["generation"]
     tag = entry.get("overthink_tag")
     second_solution_end = entry.get("second_solution_end")
