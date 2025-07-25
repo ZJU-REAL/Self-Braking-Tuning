@@ -62,11 +62,10 @@ def load_jsonl_dataset(path):
 # ===========================
 def tokenize_batch(batch, keywords):
     results = []
-    for entry in batch:
+    for entry in tqdm(batch):
         gen = entry["labeled_generation"].split("</think>")[0]
         post = remove_step_tags(entry["labeled_generation"]).split("</think>")[1]
 
-        # Step boundary
         step_tag = f"<step{entry['first_correct']+1}>"
         step_pos = gen.find(step_tag)
 
@@ -74,23 +73,23 @@ def tokenize_batch(batch, keywords):
         gen2 = gen[step_pos:] if step_pos != -1 else ""
 
         gen1 = remove_step_tags(gen1)
-        gen2 = remove_step_tags(gen2)
+        gen2_clean = remove_step_tags(gen2)
 
-        gen1_tokens = tokenizer.encode(gen1)
-        gen2_tokens = tokenizer.encode(gen2)
-
-        gen1_decoded = [tokenizer.decode([tid]) for tid in gen1_tokens]
-        gen2_decoded = [tokenizer.decode([tid]) for tid in gen2_tokens]
+        step_splits = re.findall(r"(<step\d+>[^<]*)", gen2)
+        step_tokens = [tokenizer.encode(remove_step_tags(s), add_special_tokens=False) for s in step_splits]
+        step_decoded = [[tokenizer.decode([tid]) for tid in toks] for toks in step_tokens]
 
         results.append({
             **entry,
             "gen1": gen1,
-            "gen2": gen2,
-            "gen1_tokens": gen1_decoded,
-            "gen2_tokens": gen2_decoded,
+            "gen2": gen2_clean,
+            "gen1_tokens": [tokenizer.decode([tid]) for tid in tokenizer.encode(gen1)],
+            "gen2_steps": step_splits,
+            "gen2_step_tokens": step_decoded,
             "post_think": post,
         })
     return results
+
 
 def parallel_tokenize(data, keywords, batch_size=128):
     batches = [data[i:i+batch_size] for i in range(0, len(data), batch_size)]
@@ -108,39 +107,54 @@ def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
 
     for item in tqdm(entries):
         token_list = item["gen1_tokens"].copy()
-        total_len = len(token_list)
-        question = item["question"]
-        labeled_generation = item["generation"]
-        generation = remove_step_tags(labeled_generation)
+        question = item["problem"]
+        generation = remove_step_tags(item["labeled_generation"])
         overthink_triggered = False
         mask_content = None
-        epiphany_index = None  # record length when epiphany first hits
+        epiphany_index = None
 
-        for tok in item["gen2_tokens"]:
-            total_len += 1
-            token_list.append(tok)
+        step_token_buffer = token_list.copy()
+        step_text_buffer = ""
+        gen1_step_count = len(item["gen2_steps"])
+        used_step_count = 0
 
-            merged_text = "".join(token_list).lower()
-            rer = len(item["gen1_tokens"]) / total_len
+        total_keyword_tokens = 0
+        total_tokens = len(token_list)
+        if total_tokens == 0:
+            print(f"generation = {generation}")
+            print(f"token_list = {token_list}")
+            print(f"gen1 = {item['gen1_tokens']}")
+            print(f"gen2 = {item['gen2_steps']}")
 
-            keyword_tokens = sum(
-                merged_text.count(k) * l for k, l in keywords.items()
-            )
-            omr = keyword_tokens / total_len
+        for idx, (step_str, step_tokens) in enumerate(zip(item["gen2_steps"], item["gen2_step_tokens"])):
+            step_text = "".join(step_tokens)
+            step_text_buffer += step_text
+            step_token_buffer += step_tokens
+            used_step_count += 1
+
+            step_token_len = len(step_tokens)
+            total_tokens += step_token_len
+
+            step_text_lower = step_text.lower()
+            step_keyword_tokens = sum(step_text_lower.count(k) * l for k, l in keywords.items())
+            total_keyword_tokens += step_keyword_tokens
+
+            rer = len(item["gen2_steps"][:idx]) / (used_step_count + len(item["gen2_steps"][:idx]))
+            omr = total_keyword_tokens / total_tokens
 
             score = calculate_overthink_score(rer, omr)
 
             if not overthink_triggered and score >= OVERTHINK_THRESHOLD:
                 overthink_triggered = True
-                epiphany_index = len(token_list)
+                epiphany_index = len(step_token_buffer)
 
             if overthink_triggered and score > OVERTHINK_THRESHOLD + 0.05:
-                new_generation = "".join(token_list) + EPIPHANY + item["post_think"]
+                new_generation = "".join(step_token_buffer) + EPIPHANY + item["post_think"]
                 new_generation = remove_extra_spacing(new_generation)
 
-                segment_tokens = token_list[epiphany_index:]
+                segment_tokens = step_token_buffer[epiphany_index:]
                 segment_text = "".join(segment_tokens)
-                mask_content = extract_mask_content(segment_text)
+                mask_content = segment_text
 
                 sbt_d_dataset.append({
                     "input": question,
@@ -152,12 +166,12 @@ def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
 
         else:
             if overthink_triggered:
-                new_generation = "".join(token_list) + EPIPHANY + item["post_think"]
+                new_generation = "".join(step_token_buffer) + EPIPHANY + item["post_think"]
                 new_generation = remove_extra_spacing(new_generation)
 
-                segment_tokens = token_list[epiphany_index:]
+                segment_tokens = step_token_buffer[epiphany_index:]
                 segment_text = "".join(segment_tokens)
-                mask_content = extract_mask_content(segment_text)
+                mask_content = segment_text
 
                 sbt_d_dataset.append({
                     "input": question,
