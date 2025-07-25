@@ -10,7 +10,7 @@ print(f'Start building the SBT-E dataset...')
 # ===========================
 JSONL_PATH = "data/baseline/openr1_math_92k_augmented.jsonl"         # Path to the augmented dataset
 KEYWORD_PATH = "prompts/keyword.txt"                                 # Path to keyword list
-SBT_E_PATH = "data/SBT/SBT-D.jsonl"                                      # Output path for the SBT-E formatted data
+SBT_E_PATH = "data/SBT/SBT-E.jsonl"                                      # Output path for the SBT-E formatted data
 TOKENIZER_PATH = "models/Qwen/Qwen2.5-Math-1.5B-Instruct"            # Tokenizer source (local or remote)
 OVERTHINK_THRESHOLD = float(input("Please choose the overthink threshold (e.g., 0.2): "))  # Threshold for overthinking detection
 EPIPHANY = "Wait, I've gotten the same answer multiple times, time to end the thinking."   # Text to insert at epiphany point

@@ -12,7 +12,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 TOKENIZER_PATH = "models/Qwen/Qwen2.5-Math-1.5B-Instruct" 
 JSONL_PATH = "data/baseline/openr1_math_92k_augmented.jsonl"
 KEYWORD_PATH = "prompts/keyword.txt" 
-SBT_D_PATH = "data/SBT/SBT-E.jsonl" 
+SBT_D_PATH = "data/SBT/SBT-D.jsonl" 
 EPIPHANY = "Wait, my answer is too verbose, let me answer it more concisely."
 OVERTHINK_THRESHOLD = float(input("Please choose the overthink OVERTHINK_THRESHOLD (e.g., 0.2): "))
 print(f"[INFO] OVERTHINK_THRESHOLD set to: {OVERTHINK_THRESHOLD}")
