@@ -114,21 +114,21 @@ def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
         epiphany_index = None
 
         step_token_buffer = token_list.copy()
-        step_text_buffer = ""
-        gen1_step_count = len(item["gen2_steps"])
+        gen1_step_count = item["first_correct"]
         used_step_count = 0
 
         total_keyword_tokens = 0
         total_tokens = len(token_list)
         if total_tokens == 0:
-            print(f"generation = {generation}")
-            print(f"token_list = {token_list}")
-            print(f"gen1 = {item['gen1_tokens']}")
-            print(f"gen2 = {item['gen2_steps']}")
+            sbt_d_dataset.append({
+                "input": question,
+                "output": generation
+            })
+            no_overthink_count += 1
+            continue
 
         for idx, (step_str, step_tokens) in enumerate(zip(item["gen2_steps"], item["gen2_step_tokens"])):
             step_text = "".join(step_tokens)
-            step_text_buffer += step_text
             step_token_buffer += step_tokens
             used_step_count += 1
 
@@ -139,7 +139,7 @@ def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
             step_keyword_tokens = sum(step_text_lower.count(k) * l for k, l in keywords.items())
             total_keyword_tokens += step_keyword_tokens
 
-            rer = len(item["gen2_steps"][:idx]) / (used_step_count + len(item["gen2_steps"][:idx]))
+            rer = gen1_step_count / (gen1_step_count + used_step_count)
             omr = total_keyword_tokens / total_tokens
 
             score = calculate_overthink_score(rer, omr)
@@ -149,12 +149,11 @@ def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
                 epiphany_index = len(step_token_buffer)
 
             if overthink_triggered and score > OVERTHINK_THRESHOLD + 0.05:
-                new_generation = "".join(step_token_buffer) + EPIPHANY + item["post_think"]
+                new_generation = "".join(step_token_buffer) + EPIPHANY + "</think>" + item["post_think"]
                 new_generation = remove_extra_spacing(new_generation)
 
                 segment_tokens = step_token_buffer[epiphany_index:]
-                segment_text = "".join(segment_tokens)
-                mask_content = segment_text
+                mask_content = "".join(segment_tokens)
 
                 sbt_d_dataset.append({
                     "input": question,
@@ -170,8 +169,7 @@ def build_sbt_d_data(entries, keywords, OVERTHINK_THRESHOLD):
                 new_generation = remove_extra_spacing(new_generation)
 
                 segment_tokens = step_token_buffer[epiphany_index:]
-                segment_text = "".join(segment_tokens)
-                mask_content = segment_text
+                mask_content = "".join(segment_tokens)
 
                 sbt_d_dataset.append({
                     "input": question,
