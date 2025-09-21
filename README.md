@@ -69,6 +69,10 @@
 </div>
 <br>
 
+## News 🔥🔥
+- **2025.05.20:** We release our paper.
+- **2025.09.18:** Our paper has been accepted by **NeurIPS 2025**.
+
 ## 📝 About
 Self-Braking Tuning is a novel framework that unlocks the potential of large reasoning models to autonomously identify and terminate redundant reasoning, enabling the models to regulate their own reasoning processes without relying on external control mechanisms. 
 During fine-tuning, we use the Megatron-LM framework, with related parameters specified in [`configs/train.yaml`](configs/train.yaml); for evaluation, we employ the vLLM framework as the inference engine, with corresponding parameters located in [`configs/evaluation.yaml`](configs/evaluation.yaml).
